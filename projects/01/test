@@ -1,0 +1,8 @@
+
+    Not(in = sel[0], out = not_sel_0);
+    Not(in = sel[1], out = not_sel_1);
+
+    And(a = not_sel_0, b = not_sel_1, out = out_a);
+    And(a = sel[0], b = sel[1], out = out_d);
+    And(a = not_sel_0, b = sel[1], out = out_b);
+    And(a = sel[0], b = not_sel_1, out = out_c);
