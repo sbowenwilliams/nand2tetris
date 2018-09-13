@@ -36,11 +36,33 @@ CHIP ALU {
         f,  // compute out = x + y (if 1) or x & y (if 0)
         no; // negate the out output?
 
-    OUT 
-        out[16], // 16-bit output
-        zr, // 1 if (out == 0), 0 otherwise
-        ng; // 1 if (out < 0),  0 otherwise
+    OUT
+      out[16], // 16-bit output
+      zr, // 1 if (out == 0), 0 otherwise
+      ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
-}
+    Mux16(a=x, b=false, sel=zx, out=zxOut);
+
+    Not16(in = zxOut, out = notX);
+    Mux16(a = zxOut, b = notX, sel = nx, out = nxOut);
+
+    Mux16(a = y, b = false, sel = zy, out = zyOut);
+
+    Not16(in = zyOut, out = notY);
+    Mux16(a = zyOut, b = notY, sel = ny, out = nyOut);
+
+    Add16(a = nxOut, b = nyOut, out = xPlusY);
+    And16(a = nxOut, b = nyOut, out = xAndY);
+    Mux16(a = xAndY, b = xPlusY, sel = f, out = fOut);
+
+    Not16(in = fOut, out = notFOut);
+    Mux16(a = fOut, b = notFOut, sel = no, out = out, out[0..7] = firstOut, out[8..15] = secondOut, out[15] = highestOrderFuckYou );
+
+    Or8Way(in = firstOut, out = eightWay1);
+    Or8Way(in = secondOut, out = eightWay2);
+    Or(a = eightWay1, b = eightWay2, out = orOrOr);
+    Not(in = orOrOr, out = zr);
+
+    And(a = true, b = highestOrderFuckYou, out = ng);
+ }
